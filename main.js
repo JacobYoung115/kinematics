@@ -7,30 +7,48 @@ window.onload = function() {
     width = canvas.width = window.innerWidth;
     height = canvas.height = window.innerHeight;
 
-    var arm  = Arm.create(width / 2, height / 2, 100, 0.1);
-        angle = 0;
-        arm2 = Arm.create(arm.getEndX(), arm.getEndY(), 100, 1.3);
-        arm3 = Arm.create(arm2.getEndX(), arm2.getEndY(), 100, 1.3);
-    arm2.parent = arm;
-    arm3.parent = arm2;
+    var leg0 = FKSystem.create(width / 2, height / 2);
+    leg0.addArm(200, Math.PI / 2, Math.PI / 4, 0);
+    leg0.addArm(180, 0.87, 0.87, -1.5);
+    leg0.addArm(75, -Math.PI / 3, Math.PI / 8, 0);
+
+    var leg1 = FKSystem.create(width / 2, height / 2);
+    leg1.phase = Math.PI;
+    leg1.addArm(200, Math.PI / 2, Math.PI / 4, 0);
+    leg1.addArm(180, 0.87, 0.87, -1.5)
+    leg1.addArm(75, -Math.PI / 3, Math.PI / 8, 0);
 
     update();
 
     function update() {
         context.clearRect(0, 0, width, height);
-        arm.angle = Math.sin(angle) * 1.2;
-        arm2.angle = Math.cos(angle * 0.5) * 0.93;
-        arm3.angle = Math.sin(angle * 1.5) * 1.34;
-        arm2.x = arm.getEndX();
-        arm2.y = arm.getEndY();
-        arm3.x = arm2.getEndX();
-        arm3.y = arm2.getEndY();
 
-        angle += 0.05;
-        arm.render(context);
-        arm2.render(context);
-        arm3.render(context);
+        leg0.update();
+        leg0.render(context);
+        leg1.update();
+        leg1.render(context);
         requestAnimationFrame(update);
     }
+
+    document.getElementById("top_center").addEventListener("input", function(input) {
+		leg0.arms[0].centerAngle = parseFloat(this.value);
+		leg1.arms[0].centerAngle = parseFloat(this.value);
+	});
+	document.getElementById("top_range").addEventListener("input", function(input) {
+		leg0.arms[0].rotationRange = parseFloat(this.value);
+		leg1.arms[0].rotationRange = parseFloat(this.value);
+	});
+	document.getElementById("bottom_center").addEventListener("input", function(input) {
+		leg0.arms[1].centerAngle = parseFloat(this.value);
+		leg1.arms[1].centerAngle = parseFloat(this.value);
+	});
+	document.getElementById("bottom_range").addEventListener("input", function(input) {
+		leg0.arms[1].rotationRange = parseFloat(this.value);
+		leg1.arms[1].rotationRange = parseFloat(this.value);
+	});
+	document.getElementById("bottom_phase").addEventListener("input", function(input) {
+		leg0.arms[1].phaseOffset = parseFloat(this.value);
+		leg1.arms[1].phaseOffset = parseFloat(this.value);
+	});
     
 }
